@@ -208,7 +208,7 @@
 
 1. **INFORME FINAL ENTREGADO TARDÍAMENTE:** M2-FOR-074 completo (33 páginas) pero no disponible en primera revisión.
 2. **Sin evidencia sustentación oral:** No hay diapositivas ni registro de presentación (T76 = 5.0)
-3. **7 formularios faltantes:** M2-FOR-066, 067, 069, 071, 073, 074, 075 no proporcionados (39% incompleto)
+3. **6 formularios faltantes:** M2-FOR-049, 066, 071, 073, 075, 076 no proporcionados (35% incompleto). NOTA: M2-FOR-067 y M2-FOR-069 fueron localizados posteriormente en archivos compartidos.
 4. **Fallas equipo no mitigadas:** Sobrecalentamiento generador y falla motor sin plan contingencia
 5. **Posible formulario incorrecto:** M2-FOR-068_MB parece corresponder a proyecto diferente (Escollera)
 6. **Control terrestre ausente:** Sin vínculo red geodésica ni puntos apoyo terrestres
@@ -218,7 +218,7 @@
 
 ## RECOMENDACIONES
 
-1. **Completar formularios faltantes** antes de calificación final
+1. **Completar formularios faltantes** (M2-FOR-049, 066, 071, 073, 075, 076) antes de calificación final
 2. **Entregar M2-FOR-074** con metodología completa, desafíos, limitaciones y análisis de precisión
 3. **Preparar y documentar sustentación oral** con diapositivas profesionales
 4. **Corregir/aclare M2-FOR-068_MB** — verificar pertenece a este proyecto
@@ -230,7 +230,7 @@
 
 ## CONSIDERACIONES FINALES
 
-El proyecto del Grupo A demuestra competencia técnica en procesamiento de datos hidrográficos y uso correcto de herramientas profesionales (Caris HIPS, CUBE). Sin embargo, la **incompletitud documental crítica** (falta informe final, formularios faltantes, sin sustentación) impide una calificación superior. La nota de 7.5 refleja un trabajo que cumple técnicamente pero falla en entregables formales y completitud del proceso.
+El proyecto del Grupo A demuestra competencia técnica en procesamiento de datos hidrográficos y uso correcto de herramientas profesionales (Caris HIPS, CUBE). El informe final (M2-FOR-074) fue entregado y evaluado (T75 = 8.5). Sin embargo, la **incompletitud documental** (6 formularios faltantes, sin sustentación oral) impide una calificación superior.
 
 La calificación podría revisarse a **C+ (8.0)** si se completan los formularios faltantes y se presenta la sustentación oral.
 
