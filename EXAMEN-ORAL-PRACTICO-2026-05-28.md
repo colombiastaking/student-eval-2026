@@ -1,7 +1,7 @@
-# EXAMEN ORAL PRÁCTICO — HIDROGRAFÍA CATEGORÍA A
-## CMFP S5A — Escuela Naval de Cadetes "Almirante Padilla"
+# EXAMEN ORAL PRACTICO - HIDROGRAFIA CATEGORIA A
+## CMFP S5A - Escuela Naval de Cadetes "Almirante Padilla"
 **Fecha del examen:** 28 de mayo de 2026
-**Evaluador:** Capitán de Coberta Álvarez Orduz Omar Sebastián
+**Evaluador:** Capitan de Coberta Alvarez Orduz Omar Sebastian
 
 ---
 
@@ -37,6 +37,52 @@
 | **Blancos** | **SÍ: Boya E1 Verde y E2 Roja (ambas 5.56m)** |
 | Área | Escollera Bahía de Cartagena |
 | Duración | 2 días (30 enero MB, 16 febrero SB) |
+
+---
+
+## NUEVAS PREGUNTAS TÉCNICAS PRÁCTICAS
+
+Estas preguntas van al corazón de la calidad del levantamiento — cosas que un operador experimentado debe saber responder sin pensar.
+
+---
+
+### PREGUNTAS TÉCNICAS DE CAMPO
+
+#### P1 — Calibración en tiempo real (para cualquiera)
+"Están en medio de la adquisición a las 10:30. El ecosonda empieza a mostrar profundidades inconsistentes — 8.2m, 8.5m, 8.1m en el mismo punto en tres pasadas consecutivas. ¿Qué tres cosas verifican PRIMERO antes de seguir adquiriendo?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+1. **Verificar el check bar** — ¿el bias cambió desde la mañana? Con estructuras de acero cerca (rieles, muelles), el campo magnético puede afectar el transductor.
+2. **Verificar el SVP** — ¿la estratificación térmica cambió entre las 8:30 y las 10:30? Un perfil de 6.38m a las 8:30 puede no representar la columna de agua a las 10:30 con calentamiento solar.
+3. **Verificar el MRU** — ¿está compensando correctamente? Con viento aumentando, el roll puede exceder los límites de compensación del MRU 5+.
+
+**Lo que no debe decir:** "Sigo adquiriendo y arreglo en post-procesamiento" = respuesta incorrecta.
+
+#### P2 — Verificación vertical rápida (para cualquiera)
+"Es 14:00. Han adquirido 4 horas de datos. Quieren verificar que el datum vertical está correcto sin volver a tierra. Tienen GPS RTK, el ecosonda, y un poste de amarre visible en el muelle. ¿Cómo hacen la verificación en 10 minutos?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Paso 1:** GPS RTK en el poste de amarre → obtener elevación MSL en tiempo real.
+- **Paso 2:** Ecosonda debajo del poste → medir profundidad.
+- **Paso 3:** Sumar profundidad + calado + offset Z del transductor = elevación del fondo en MSL.
+- **Paso 4:** Comparar con la reducción de marea en ese instante.
+- **Paso 5:** Si profundidad reducida ≠ profundidad medida ±0.10m = problema con datum.
+
+**Variante rápida:** Si no hay poste, usar la propia embarcación: GPS en la cubierta = elevación conocida; el ecosonda mide al fondo; la diferencia debe coincidir con la marea reducida.
+
+#### P3 — Densidad de líneas vs tiempo (para cualquiera)
+"Tienen 6 horas de ventana de marea para levantar 2.64 millas náuticas (4889m) de multihaz. La especificación requiere 150% de cobertura lateral. ¿Cuántas líneas paralelas necesitan y a qué velocidad? Si el viento aumenta y solo pueden mantener 3 nudos en vez de 4, ¿qué sacrifican primero: cobertura, resolución, o líneas de verificación?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Cálculo:**
+  - Swath del EM2040P a 10m profundidad ≈ 120m (ángulo de apertura 140°)
+  - 150% cobertura = 120m × 1.5 = necesitan superposición de 60m entre líneas adyacentes
+  - Espaciado entre líneas = 120m - 60m = 60m
+  - 4889m ÷ 60m = **81 líneas** (redondeado)
+  - Tiempo por línea: 4889m ÷ (4 nudos × 1852m/nudo) = 0.66 horas = 40 min/línea
+  - Total: 81 × 40 min = 3240 min = 54 horas = **IMPOSIBLE en 6 horas**
+- **Solución real:** Reducir swath a 80m (100% cobertura) o usar modo de alta resolución con swath reducido.
+- **Sacrificio:** A 3 nudos, el tiempo por línea aumenta a 53 min. Aún imposible. Deben reducir área o aceptar 100% cobertura (no 150%).
 
 ---
 
@@ -86,7 +132,54 @@
 
 ### RODRÍGUEZ PUENTES NICOLAS (Proceso)
 
-#### PREGUNTA 1: TPU y el sensor mareográfico
+#### PREGUNTA 1: Calibración en tiempo real durante adquisición
+"Son las 10:30 del 16 de febrero. Han adquirido 2 horas de datos multihaz. El operador de Hypack nota que las profundidades en las líneas de retorno son 10cm más sombras que en la ida, en el MISMO punto. ¿Qué verifican PRIMERO — el check bar, el SVP, o el MRU? Y si el check bar ahora da 1.02m en vez de 0.99m de la mañana, ¿qué decisión toman AHORA, en el campo, sin esperar a post-procesamiento?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Síntoma clave:** Diferencia sistemática entre ida y retorno = probable error de pitch o heave.
+- **Verificación 1 (rápida, 2 min):** Check bar en el momento. Si cambió de 0.99m a 1.02m = bias cambió +3cm.
+- **Verificación 2 (5 min):** SVP rápido. Si la columna de agua se calentó, la velocidad del sonido cambió y la profundidad medida cambia proporcionalmente.
+- **Verificación 3 (visual):** MRU 5+ — ¿está el LED de status verde? ¿Hay alarma de "excessive motion"?
+- **Decisión en campo:**
+  - Si check bar cambió: Aplicar nuevo bias en Hypack (Vessel File → edit) y CONTINUAR, documentando el cambio en M2-FOR-066 (minuta).
+  - Si SVP cambió: Tomar nuevo perfil, cargarlo en Hypack, y RE-ADQUIRIR las últimas 2 líneas con SVP incorrecto.
+  - Si MRU falla: ABORTAR. No hay corrección en post-procesamiento para datos con MRU defectuoso.
+- **Respuesta incorrecta:** "Lo arreglo en Caris después" = INVALIDA los datos.
+
+#### PREGUNTA 2: Densidad de líneas vs tiempo disponible
+"Su M2-FOR-068 muestra 20 líneas de multihaz en 4889m, completadas en un día. Pero su instrucciones M2-FOR-056 dice 'Orden Especial con 100% cobertura'. El EM2040P a 10m de profundidad tiene swath de ~120m. Con 20 líneas en 4889m, el espaciado promedio es 244m. ¿Esto da 100% cobertura? Si no, ¿cuántas líneas NECESITABAN realmente?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Cálculo real:**
+  - Área aproximada: 4889m × ancho promedio (estimado 50m) = 244,450 m²
+  - Swath EM2040P a 10m: ~120m (con ángulo de apertura 140°)
+  - 100% cobertura con 20% de solape = espaciado entre líneas = 120m × 0.8 = 96m
+  - Líneas necesarias = 4889m ÷ 96m = **51 líneas** (mínimo)
+  - Ellos hicieron 20 líneas = **solamente 39% de la cobertura requerida**
+- **PERO:** Su área no es rectangular. Las 20 líneas cubren la dársena en zig-zag, no paralelo.
+- **Respuesta correcta del estudiante:** Debe admitir que la cobertura es insuficiente o justificar por qué el zig-zag compensa.
+- **Trampa:** Si defiende las 20 líneas como suficientes = no entiende la geometría del swath.
+
+#### PREGUNTA 3: Verificación de datum vertical sin benchmark
+"No tomaron blancos (M2-FOR-069 dice 'NO SE ADQUIRIÓ'). Es 14:00, están en el campo, y el Capitán de Puerto quiere saber si la profundidad de -10m en su carta es segura para un buque con calado de 9.5m. ¿Cómo verifican en 5 minutos que su datum vertical no tiene error de 0.5m?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Problema:** Sin blancos, no hay verificación independiente del datum vertical.
+- **Solución rápida (5 min):**
+  1. Ubicar un punto de amarre en el muelle con coordenadas conocidas (o medir con RTK)
+  2. Medir profundidad con ecosonda justo al lado del punto de amarre
+  3. Medir altura del punto de amarre sobre el agua con cinta métrica
+  4. Comparar: Profundidad + altura sobre agua = elevación del fondo = debe ser constante
+  5. Aplicar reducción de marea: si el resultado no coincide con la batimetría previa ±0.1m = error en datum
+- **Sin punto de amarre:** Usar la propia embarcación:
+  - RTK en cubierta = elevación conocida en MSL
+  - Ecosonda mide al fondo
+  - Calado + offset Z + profundidad = elevación del fondo
+  - Comparar con la reducción de marea en ese instante
+- **Respuesta incorrecta:** "No podemos verificar sin benchmark" = falso, hay métodos rápidos.
+- **Lo que NO hicieron:** No documentaron ninguna verificación. Simplemente confiaron en el mareógrafo del CIOH.
+
+---
 "En su cálculo de TPU, usaron error del sensor mareográfico = 0.002m. Pero nunca verificaron que el mareógrafo del CIOH estuviera calibrado. Si el mareógrafo tuviera un error de 0.05m (común en sensores de presión sin mantenimiento), ¿cuánto aumentaría su TPU de 0.241m? ¿Cómo habrían detectado esto en campo sin equipo especializado?"
 
 **ARGUMENTOS PARA EL EVALUADOR:**
@@ -142,7 +235,21 @@
 - **Respuesta esperada:** "No teníamos protocolo formal pero..." [debe explicar qué hicieron realmente]. Si dice "confiamos en el disco de la laptop" = insuficiente.
 - **Profesionalismo:** En un proyecto real con DEME, la pérdida de datos brutos invalida el contrato y requiere re-levantamiento a costo del contratista.
 
-#### PREGUNTA 2: Identificación de artefactos
+#### PREGUNTA 2: Ecosonda da profundidades inconsistentes
+"Es 11:00 del 16 de febrero. El EM2040P está adquiriendo pero las profundidades oscilan ±0.3m en el mismo punto en pasadas consecutivas. Usted está en la lancha y no es el procesador. ¿Qué le dice al Jefe de Campo? ¿Le pide abortar, seguir, o verificar algo específico?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **No es decisión del Team Member:** Debe comunicar al Jefe de Campo, pero puede hacer recomendaciones técnicas.
+- **Verificaciones rápidas (3 min):**
+  1. "Jefe, el ecosonda oscila ±0.3m — sugiero verificar check bar y MRU antes de continuar"
+  2. Si check bar cambió: aplicar nuevo bias, documentar, continuar
+  3. Si MRU está en alarma: "Sugiero abortar esta línea y reiniciar cuando el viento baje"
+- **Error común:** Decir "sigo adquiriendo y ya veremos en procesamiento" = inaceptable.
+- **IHO S-44:** Los datos con oscilaciones no calificables deben marcarse como "sospechosos" en el log.
+- **Lo que documentaron:** Nada. No hay minuta de campo detallada (M2-FOR-066 no existe o está incompleto).
+
+#### PREGUNTA 3: Verificación de datum vertical sin benchmark
+"Es 14:00, están en el campo, y el Capitán de Puerto quiere saber si la profundidad de -10m en su carta es segura para un buque con calado de 9.5m. ¿Cómo verifican en 5 minutos que su datum vertical no tiene error de 0.5m?"
 "En su informe de procesamiento, mencionan análisis visual en editores Caris pero sin análisis estadístico. En una dársena artificial con paredes verticales, el multipath produce ecos fantasma que parecen fondo real. ¿Cómo distingue visualmente un eco de multipath de un objeto real en el swath editor? ¿Qué patrón espacial característico tiene el multipath en líneas paralelas?"
 
 **ARGUMENTOS PARA EL EVALUADOR:**
