@@ -1,9 +1,9 @@
 # EXAMEN ORAL PRACTICO - HIDROGRAFIA CATEGORIA A
-## CMFP S5A - Escuela Naval de Cadetes "Almirante Padilla"
-**Fecha del examen:** 28 de mayo de 2026
-**Evaluador:** Capitan de Coberta Alvarez Orduz Omar Sebastian
 
----
+Fecha del examen: 28 de mayo de 2026  
+Evaluador: Capitan de Coberta Alvarez Orduz Omar Sebastian
+
+***
 
 ## DATOS TÉCNICOS EXTRAÍDOS DE LOS PROYECTOS
 
@@ -472,17 +472,367 @@ Estas preguntas van al corazón de la calidad del levantamiento — cosas que un
 
 ---
 
-## ASIGNACIÓN ESTRATÉGICA DE PREGUNTAS
+## PREGUNTAS ADICIONALES — COSAS QUE HICIERON BIEN (Profundidad Cat A)
 
-| Estudiante | Debilidad Principal | Pregunta más efectiva |
-|-----------|---------------------|----------------------|
-| **Grupo A - Pérez Londoño** | Sin plan de contingencia, roles mal definidos | Pregunta 1 (offsets + error de roll) + seguimiento de seguridad |
-| **Grupo A - Rodríguez Puentes** | Patch test sin resultados, bias no corregido | Pregunta 2 (patch test + error de apuntamiento) |
-| **Grupo A - Trujillo Jaramillo** | Sin protocolo backup, metadatos básicos | Pregunta 1 (backup) + seguimiento de metadatos IHO |
-| **Grupo A - Huertas Quintero** | Sin control terrestre, sin protocolos ambientales | Pregunta 1 (MAGNA-SIRGAS) + seguimiento de derrame |
-| **Grupo B - Posada Ciro** | Sin ground-truth, tecnologías planificadas no usadas | Pregunta 3 (erosión vs movilidad) — más difícil |
-| **Grupo B - Torres Pimienta** | Puntajes perfectos, oral incompleto | Pregunta 1 (blancos flotantes vs fijos) — expone debilidad oculta |
-| **Grupo B - Murillo Quintero** | Sin problemas documentados, todo "perfecto" | Pregunta 1 (evacuación + responsabilidad legal) — rompe ilusión de perfección |
+Estas preguntas van más allá de las debilidades. Evalúan si entienden el PORQUÉ técnico de lo que hicieron correctamente — esenciales para hidrógrafos profesionales.
+
+---
+
+### GRUPO A (COTECMAR) — Lo que hicieron bien
+
+#### PREGUNTA B1 — EM2040P en pin 6 del z-pole (Pérez Londoño)
+"Eligieron USM pin 6 con z-pole de 3.14m en babor para el EM2040P. Esta es una buena elección para una dársena con tráfico portuario. Pero el EM2040P tiene ángulo de apertura de 140°. Con el transductor a 3.14m de profundidad en agua de 8.9m máxima, ¿cuál es el ancho del swath real? ¿Qué porcentaje de la profundidad representa el z-pole en aguas de 4m? ¿Cómo afecta esto la detección de objetos cerca del coronamiento del muelle?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Swath a 8.9m:** 2 × 8.9m × tan(70°) = **48.9m** de swath total
+- **Swath a 4m:** 2 × 4m × tan(70°) = **22.0m** de swath total
+- **Proporción z-pole:** 3.14m ÷ 4m = **78.5%** de la profundidad total — el transductor está muy cerca del fondo
+- **Problema en 4m:** El swath de 22m es pequeño. El z-pole de 3.14m significa que solo queda 0.86m de margen sobre el fondo. En agitación, el transductor puede golpear el fondo o capturar ecos del fondo en el swath (multipath de fondo).
+- **Detección de objetos:** Cerca del coronamiento (4m prof), el swath de 22m es insuficiente para cubrir toda la dársena en pocas líneas. Necesitan más densidad de líneas en agua somera.
+- **Lo que hicieron bien:** Elegieron pin 6 para evitar ruido del casco. Pero no analizaron la limitación en agua somera.
+- **Respuesta esperada:** "El swath a 4m es solo 22m, por lo que necesitamos líneas cada 15-18m para mantener cobertura. El z-pole de 3.14m limita la operación a aguas >3.5m."
+
+#### PREGUNTA B2 — Uso de SeaPath 130 + Trimble R10 (Rodríguez Puentes)
+"Combinaron SeaPath 130 (posición + heading) con Trimble R10 (RTK). El SeaPath da precisión de 0.5m en posición y 0.1° en heading por post-procesamiento. Pero ustedes usaron RTK en tiempo real. ¿Por qué el heading del SeaPath es más preciso que el calculado por diferencia de posición GPS a 4 nudos? ¿Cómo verificaron que el heading del SeaPath estaba sincronizado con el GPS?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Heading por GPS:** Derivada de la diferencia de posición entre dos antenas. A 4 nudos (2.06 m/s), con 1Hz GPS, la distancia entre fixes = 2.06m. El heading calculado tiene resolución de arctan(0.01m/2.06m) ≈ 0.3°.
+- **Heading SeaPath:** Usa sensores inerciales + GPS integrado. Precisión 0.1° en tiempo real, independiente de la velocidad.
+- **Sincronización:** Verificar que el timestamp del heading (GPHDT o HEHDT) coincida con el timestamp de la posición (GPGGA) dentro de ±0.1s. En Caris HIPS, esto se configura en Vessel Configuration → Time Synchronization.
+- **Lo que hicieron bien:** Usaron SeaPath para heading preciso en tiempo real, evitando la deriva del cálculo por diferencia de posición.
+- **Respuesta esperada:** "El heading SeaPath de 0.1° es 3× mejor que el derivado GPS. Lo verificamos comparando la dirección de las líneas de adquisición..."
+
+#### PREGUNTA B3 — Elección de 2 perfiles SVP (Trujillo Jaramillo)
+"Tomaron 2 perfiles de SVP separados por 3.5 horas. En febrero en el Caribe, la capa superficial se calienta aproximadamente 0.5°C/hora entre 8:30 y 12:00. ¿Cuánto cambia la velocidad del sonido en la capa superficial por ese calentamiento? ¿Es significativo para un levantamiento de Orden Especial en aguas de 6.38m máxima?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Cambio térmico:** 0.5°C/hora × 3.5 horas = 1.75°C total.
+- **Efecto en C:** La velocidad del sonido aumenta ~4.6 m/s por °C en agua a 25°C.
+- **Cambio total:** 1.75°C × 4.6 m/s/°C = **8.05 m/s** de diferencia en la capa superficial.
+- **Efecto en profundidad:** En agua de 6.38m con gradiente térmico de 8 m/s en los primeros 2m, el error de profundidad = (8/1500) × 6.38m = **0.034m = 3.4cm**.
+- **Significativo para Orden Especial:** TVU permitido = 0.25m a 5m. 3.4cm es el 13.6% del TVU — **no es despreciable**.
+- **Lo que hicieron bien:** Tomaron 2 perfiles, capturando la variación diurna. Pero no cuantificaron el efecto.
+- **Respuesta esperada:** "El cambio de 8 m/s en la capa superficial introduce ~3cm de error. Por eso tomamos 2 perfiles — para capturar la variación."
+
+---
+
+### GRUPO B (ESCOLLERA) — Lo que hicieron bien
+
+#### PREGUNTA B4 — Uso de blancos en boyas (Posada Ciro)
+"Tomaron 2 blancos en boyas E1 y E2. Aunque las boyas son flotantes, documentaron ambas con precisión decimétrica. Si el ancla de la boya tiene cadena de 10m y la profundidad es 15m, el radio de oscilación máximo es ~5m. ¿Cómo obtuvieron posición precisa de una estructura que se mueve? ¿Qué técnica de promediado usaron?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Promediado temporal:** Medir la posición GPS durante 5-10 minutos mientras la boya oscila. La posición media converge al centro de oscilación (proyección del ancla).
+- **Promediado espacial:** Tomar múltiples posiciones alrededor de la boya y calcular el centro geométrico.
+- **Precisión esperada:** Con 5 minutos de datos a 1Hz, el error del promedio = radio/√N = 5m/√300 ≈ 0.3m.
+- **Lo que hicieron bien:** Documentaron 2 blancos, verificando consistencia interna del posicionamiento.
+- **Mejora:** Deberían haber tomado 3-5 minutos de datos por boya, no una sola posición.
+- **Respuesta esperada:** "Promediamos la posición GPS durante varios minutos para obtener el centro de oscilación. El error resultante es ~0.3m."
+
+#### PREGUNTA B5 — Dos días de levantamiento separados (Torres Pimienta)
+"Separaron MB (30 enero) y SB (16 febrero) por 17 días. La escollera está en zona de oleaje dominante del NE. Entre ambas fechas, ¿qué fenómenos oceanográficos podrían haber cambiado las condiciones del fondo? ¿Cómo se aseguraron de que el datum vertical fuera el mismo si la estación mareográfica puede tener deriva de 1cm/semana por biofouling del sensor?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Cambios oceanográficos en 17 días:**
+  - Temporal de vientos alisios NE (enero-febrero): aumento de oleaje, movilidad sedimentaria
+  - Aporte fluvial post-precipitación: cambio en salinidad y estratificación
+  - Biofouling del sensor de presión: acumulación de algas/corales aumenta la presión registrada = lectura de marea artificialmente alta
+- **Deriva del mareógrafo:** 1cm/semana × 2.4 semanas = **2.4cm de error** potencial.
+- **Verificación:** Necesitan benchmark independiente o comparar con otro mareógrafo.
+- **Lo que hicieron bien:** Documentaron ambos días con archivos de marea correctos.
+- **Respuesta esperada:** "Entre 30 ene y 16 feb pueden ocurrir cambios por temporal de alisios. La deriva del mareógrafo por biofouling es ~2-3cm en 2 semanas. Para detectarla, necesitamos verificación con benchmark..."
+
+#### PREGUNTA B6 — EM2040P a 400 kHz vs 200-300 kHz (Murillo Quintero)
+"Usaron EM2040P a 400 kHz en vez de frecuencias más bajas. A 400 kHz, la resolución en rango es mejor (~2cm) pero la absorción acústica es mayor (9 dB/km en agua limpia). En aguas de 15m máxima con sedimentos finos, ¿por qué 400 kHz sigue siendo mejor que 200 kHz? ¿Cuándo cambiaría a frecuencia más baja?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Absorción a 400 kHz:** 9 dB/km × 0.015 km = **0.135 dB** — insignificante en 15m.
+- **Absorción a 200 kHz:** ~2 dB/km × 0.015 km = **0.03 dB** — aún menor.
+- **Resolución:** 400 kHz da resolución de 2.5cm en rango vs 5cm para 200 kHz.
+- **Ventaja en sedimentos finos:** Mejor definición del eco doble (primero y segundo retorno) para detectar capas de sedimento.
+- **Cuándo bajar a 200 kHz:** Aguas >50m o con alta turbidez (absorción por partículas en suspensión).
+- **Lo que hicieron bien:** Elegieron 400 kHz para máxima resolución en aguas someras claras.
+- **Respuesta esperada:** "En 15m la absorción es despreciable. 400 kHz da mejor resolución del eco doble para sedimentos. Cambiaría a 200 kHz solo en aguas >50m o muy turbias."
+
+---
+
+## PREGUNTAS UNIVERSALES (para ambos grupos)
+
+Estas preguntas aplican a ambos grupos. Permiten comparar respuestas y evaluar quién realmente entiende la práctica hidrográfica.
+
+---
+
+### U1 — Verificación del calado del transductor multihaz
+"El EM2040P está montado en z-pole. El calado de la embarcación es 0.40m y el z-pole mide 3.14m desde la línea de agua. ¿Cuál es el calado total del transductor respecto a la línea de agua? Y más importante: durante la adquisición, ¿cómo verifican USTEDES en tiempo real que este valor no ha cambiado por listas de la embarcación o cambio de trim?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Calado total:** 0.40m + 3.14m = **3.54m** desde línea de agua hasta transductor.
+- **Verificación en tiempo real:**
+  1. **Check bar periódico:** Si el bias del check bar varía >0.05m entre mediciones = el calado efectivo cambió
+  2. **Monitor de trim:** Si el trim cambia 2°, el calado del transductor cambia 3.14m × sin(2°) = 0.11m
+  3. **Líneas de verificación:** Pasar sobre el mismo punto en diferentes condiciones de trim; si la profundidad cambia sistemáticamente = error de calado
+- **Para Grupo A:** Documentaron z-pole de 3.14m pero no verificaron cambio por listas en dársena con tráfico.
+- **Para Grupo B:** Operaron en escollera con oleaje; el trim varía más que en dársena protegida.
+- **Respuesta esperada:** "Calado total 3.54m. Lo verificamos con check bar cada 2 horas; si el bias varía >5cm, revisamos el trim de la embarcación."
+
+### U2 — Marea aplicada vs verificación
+"Ambos grupos usaron datum vertical LAT con corrección de -0.025m del CIOH. Pero DIMAR publica dos productos: marea PREDICHA (armónicos) y marea OBSERVADA (sensor en tiempo real). ¿Cuál usaron? Y la pregunta crítica: en el campo, sin internet, sin teléfono, solo con su equipo de medición y un poste de amarre visible, ¿cómo verifican en 5 minutos que la reducción de marea de ese momento está correcta?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Predicha vs observada:** El archivo .tid de Hypack usa predicha. La observada puede diferir ±0.10m por setup meteorológico.
+- **Verificación en 5 minutos:**
+  1. Posicionar embarcación junto al poste de amarre (profundidad conocida o medible)
+  2. Medir profundidad con ecosonda: ej. 5.50m
+  3. GPS RTK en cubierta: elevación 2.30m MSL
+  4. Calado transductor: 3.54m → elevación del fondo = 2.30 - 3.54 - 5.50 = -6.74m MSL
+  5. Comparar con reducción de marea en ese instante: si marea = -0.30m LAT, y datum LAT-MSL = -0.025m, entonces profundidad reducida = 5.50 + (-0.30) - (-0.025) = 5.225m
+  6. Si la diferencia entre medido y reducido >0.05m = error en archivo de marea o datum
+- **Grupo A:** No verificaron (no tomaron blancos). Confiaron ciegamente en archivo.
+- **Grupo B:** Tomaron blancos en boyas pero no los usaron para verificar datum vertical.
+- **Respuesta esperada:** "Usamos marea predicha del armónico. La verificamos midiendo profundidad junto a un punto fijo y comparando con reducción de marea."
+
+### U3 — Latencia en instalaciones hidrográficas
+"Antes de que me digan si determinaron o no la latencia, explíqueme: ¿qué es la latencia en una instalación hidrográfica? ¿Cómo se mide con precisión? ¿En qué condiciones de este levantamiento (velocidad, profundidad, pendiente del fondo) sería CRÍTICA no corregirla?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Definición:** Retraso temporal entre timestamp del fix GPS y timestamp del eco del fondo. Típico: 0.1-2.0 segundos.
+- **Medición precisa:**
+  1. Navegar sobre característica puntual (boya, esquina de muelle)
+  2. Anotar timestamp GPS cuando la embarcación está exactamente sobre la característica
+  3. Anotar timestamp del eco del fondo cuando la profundidad mínima indica que el haz pasó por encima
+  4. Diferencia = latencia
+  5. En Caris HIPS: Patch Test → Latency Test con pasadas de ida/retorno
+- **Condiciones críticas:**
+  - Velocidad >5 nudos: 0.5s de latencia = 1.3m de error horizontal
+  - Pendiente >10°: 1m error horizontal = 0.18m error vertical
+  - Aguas someras con fondo irregular: el retraso hace que el eco se asigne a posición equivocada
+- **Grupo A:** Operaron a <4 nudos en dársena plana = latencia negligible. No fue crítica.
+- **Grupo B:** Escollera con pendiente del 1:2. A 4 nudos con 0.3s de latencia = 0.6m error en posición del talud.
+- **Respuesta esperada:** "Es el retraso GPS-ecosonda. Se mide sobre una boya comparando timestamps. Es crítica en pendientes fuertes a velocidad >5 nudos."
+
+### U4 — Selección de frecuencia del multihaz
+"Usaron EM2040P a 400 kHz. A esta frecuencia, la resolución en rango es ~2.5cm pero la absorción acústica es 9 dB/km. ¿En qué condiciones de este levantamiento habrían CAMBIADO a 200 kHz? Si hubieran encontrado turbidez extrema (visibilidad <0.5m, partículas en suspensión >50mg/L), ¿cuánto se reduce el alcance efectivo a 400 kHz vs 200 kHz?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Absorción por turbidez:** Partículas absorben energía acústica. A 400 kHz, absorción por partículas es ~4× mayor que a 200 kHz.
+- **Alcance en turbidez extrema:**
+  - 400 kHz: alcance reducido a 50-70% = swath de 120m → 60-84m efectivo
+  - 200 kHz: alcance reducido a 80-90% = swath de 150m → 120-135m efectivo
+  - Diferencia crítica: a 15m profundidad, 400 kHz pierde los extremos del swath
+- **Decisión de cambio:** Si swath efectivo se reduce <80m, el 100% cobertura requiere más líneas = aumento de tiempo o reducción de área.
+- **Grupo A:** Aguas claras de dársena, 400 kHz fue óptimo.
+- **Grupo B:** Sedimentos finos en escollera, posible turbidez resuspendida por oleaje.
+- **Respuesta esperada:** "Cambiaría a 200 kHz en turbidez extrema. A 400 kHz perdería ~30% del alcance por absorción de partículas."
+
+### U5 — Líneas de adquisición y geometría del fondo
+"Las líneas de adquisición deben optimizarse para la geometría del fondo. Si el fondo tiene un talud con pendiente 1:2 (26.6°), ¿es mejor orientar las líneas paralelas al talud o perpendiculares? ¿Qué error de posición introduce una imprecisión de 0.10m en el GPS cuando las líneas son paralelas al talud vs perpendiculares?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Paralelas al talud:** Mejor para interpolación de la pendiente continua. Pero: error GPS horizontal se proyecta en la dirección de la pendiente.
+  - Error vertical = 0.10m × tan(26.6°) = **0.05m**
+- **Perpendiculares al talud:** Capturan la transición talud-plano mejor. Pero: requieren más líneas para cobertura.
+  - Error vertical = 0.10m × sin(26.6°) = **0.04m** (menor, pero la interpolación entre líneas es más crítica)
+- **Solución óptima:** Líneas principales paralelas al talud + líneas de cruce perpendiculares cada 100-200m.
+- **Grupo B (Escollera):** Hicieron líneas paralelas al talud — buena elección para estructura lineal.
+- **Grupo A (COTECMAR):** Dársena con fondo plano, orientación de líneas menos crítica.
+- **Respuesta esperada:** "Paralelas al talud para mejor interpolación de la pendiente. El error GPS de 0.10m se proyecta como 5cm vertical. Mitigamos con líneas de cruce perpendiculares."
+
+### U6 — Diagnóstico de saltos entre líneas
+"En levantamientos anteriores en la misma zona se observan saltos sistemáticos entre líneas adyacentes. Mencionen TRES causas probables y cómo las diagnosticarían ustedes si fueran los supervisores. Ordénenlas de más probable a menos probable para este tipo de levantamiento (embarcación <5m, aguas someras, equipo Kongsberg)."
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+
+**Más probable: Squat de la embarcación**
+- La embarcación se hunde a mayor velocidad por efecto hidrodinámico.
+- Si línea de ida = 4 nudos, retorno = 3 nudos → squat diferente = salto sistemático.
+- **Diagnóstico:** Graficar profundidad vs velocidad. Si el salto correlaciona con velocidad = squat.
+- **Mitigación:** Check bar a velocidad constante; usar mismo trim en ida y retorno.
+
+**Segunda: Error de pitch en patch test**
+- Patch test de pitch incorrecto hace que ida y retorno den profundidades diferentes.
+- **Diagnóstico:** Comparar profundidad exactamente en el mismo punto (idavuelta). Si diferencia = 2× error de pitch × profundidad.
+- **Mitigación:** Repetir patch test en área plana con característica conocida.
+
+**Tercera: Variación de SVP entre líneas**
+- Si cada línea usa SVP diferente (tomado en diferente hora/ubicación), la profundidad cambia.
+- **Diagnóstico:** Revisar logs de SVP. Si el salto coincide con cambio de perfil = SVP.
+- **Mitigación:** Usar SVP promedio o tomar perfil antes de cada bloque de líneas.
+
+- **Respuesta esperada ordenada:** "1) Squat — diagnosticamos con profundidad vs velocidad. 2) Pitch — comparamos ida/retorno en mismo punto. 3) SVP — revisamos logs de perfiles."
+
+---
+
+## PREGUNTAS ESPECÍFICAS POR GRUPO — REFORMULADAS DEL EXAMEN ORAL
+
+Basadas en observaciones directas del trabajo de campo de cada grupo.
+
+---
+
+### GRUPO ESCOLLERA — Preguntas específicas del evaluador
+
+---
+
+### GRUPO ESCOLLERA — Preguntas del evaluador
+
+#### PREGUNTA E1 — Líneas de monohaz paralelas al talud (Posada Ciro)
+"En su levantamiento monohaz, las líneas se hicieron paralelas al talud de la escollera a 10m de profundidad. Esta es una buena táctica para que la interpolación refleje de manera precisa la geometría de la escollera. Pero el talud de la escollera tiene una pendiente aproximada de 1:2. Si las líneas son paralelas al talud, ¿qué error de posición introducen en la cresta de la escollera cuando el GPS tiene un error de 0.10m en tiempo real? ¿Cómo lo mitigan?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Error en la cresta:** Con pendiente 1:2 (26.6°), un error horizontal de 0.10m se proyecta verticalmente como 0.10m × tan(26.6°) = **0.05m de error en la posición de la cresta**.
+- **Mitigación:** Líneas de verificación perpendiculares al talud capturan la pendiente real. Sin líneas de cruce, la interpolación asume pendiente uniforme entre líneas paralelas.
+- **Lo que hicieron bien:** Elegieron orientación de líneas que sigue la geometría estructural — buena práctica para estructuras lineales.
+- **Trampa:** Si justifican solo con "es más fácil navegar" = no entienden la implicación geométrica.
+- **Respuesta esperada:** "El error de 0.10m GPS se proyecta como 5cm en la cresta. Mitigamos con líneas de cruce cada 100m para verificar la pendiente real."
+
+#### PREGUNTA E2 — Medición del calado del multihaz (Torres Pimienta)
+"El EM2040P está montado en z-pole de 3.14m. El calado de la embarcación es 0.40m. ¿Cómo midieron el calado real del transductor respecto a la línea de agua? ¿Y cómo verifican ese valor en Hypack sin desmontar el equipo?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Calado real del transductor:** Calado embarcación (0.40m) + offset Z del transductor respecto a la línea de agua. Si el z-pole de 3.14m se mide desde la línea de agua, el calado del transductor = **3.54m** (0.40m + 3.14m).
+- **Verificación en Hypack:**
+  1. Vessel Configuration → Transducer → verificar Z offset
+  2. Comparar con check bar: si el bias es consistente durante todo el día, el calado está correcto
+  3. Si el check bar cambia sistemáticamente con la marea = el calado no incluye la variación de la línea de agua
+- **Lo que hicieron bien:** Documentaron el z-pole de 3.14m en M2-FOR-065.
+- **Trampa:** Si no saben dónde verificarlo en Hypack = no dominan la configuración del sistema.
+- **Respuesta esperada:** "El calado del transductor es 3.54m. En Hypack lo verificamos en Vessel File, y confirmamos con check bar durante la adquisición."
+
+#### PREGUNTA E3 — Datum vertical LAT y verificación de marea (Murillo Quintero)
+"Usaron datum vertical LAT con corrección de -0.025m del mareógrafo CIOH. ¿Qué marea específica aplicaron — la predicha o la observada? Si era la predicha, ¿cómo verificaron que los valores de marea estuvieran correctos en el campo sin depender del archivo descargado?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Marea predicha vs observada:** El archivo .tid de Hypack usa marea predicha (armónicos). La marea observada del mareógrafo puede diferir por efectos meteorológicos (setup).
+- **Verificación en campo:**
+  1. Medir profundidad con ecosonda en un punto de profundidad conocida (boya, poste)
+  2. Comparar con la reducción de marea en ese instante
+  3. Diferencia sistemática >0.05m = error en el archivo de marea o en el datum
+- **Lo que hicieron bien:** Aplicaron corrección de -0.025m LAT-MSL.
+- **Trampa:** Si dicen "confiamos en el archivo del CIOH" = no hicieron verificación independiente.
+- **Respuesta esperada:** "Usamos marea predicha del armónico. La verificamos comparando profundidad medida vs reducción de marea en el punto de boya E1."
+
+#### PREGUNTA E4 — Latencia no determinada en patch test (Posada Ciro)
+"En su patch test no determinaron la latencia. Antes de explicarme por qué no lo hicieron, explíqueme qué es la latencia en una instalación hidrográfica, cómo se mide, y en qué condiciones del levantamiento es crítica."
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Definición:** Latencia = retraso temporal entre la medición del GPS (posición) y la medición del ecosonda (profundidad). Típicamente 0-2 segundos.
+- **Cómo se mide:**
+  1. Navegar sobre una característica conocida (boya, esquina de muelle)
+  2. Comparar el timestamp del fix GPS con el timestamp del eco del fondo
+  3. En Caris HIPS: Patch Test → Latency → analizar desplazamiento sistemático en las pasadas de ida/vuelta
+- **Cuándo es crítica:**
+  - Velocidades >6 nudos (más desplazamiento durante el retraso)
+  - Cambios de rumbo bruscos (el ecosonda mide "atrás" de la posición)
+  - Aguas someras con pendientes fuertes (error horizontal se proyecta en profundidad)
+- **Por qué no la determinaron:** Posiblemente porque operaron a <4 nudos en área de fondo plano = latencia negligible (<0.5m desplazamiento).
+- **Respuesta correcta:** "La latencia es el retraso GPS-ecosonda. Se mide comparando timestamps sobre una característica. A 3 nudos con fondo plano, el error es <0.5m, por eso no fue crítica para nuestro levantamiento."
+
+#### PREGUNTA E5 — Multihaz a 400 kHz vs 200 kHz (Murillo Quintero)
+"Ya le pregunté por qué 400 kHz. Ahora la pregunta inversa: ¿en qué condiciones de este levantamiento habrían cambiado a 200 kHz? Si hubieran encontrado turbidez extrema (visibilidad <0.5m) en la base de la escollera, ¿cuánto se reduce el alcance efectivo a 400 kHz vs 200 kHz?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Absorción por turbidez:** Partículas en suspensión absorben y dispersan la energía acústica. A 400 kHz, la absorción por partículas es ~4× mayor que a 200 kHz.
+- **Alcance en turbidez extrema:**
+  - 400 kHz: alcance reducido a 50-70% en agua turbia
+  - 200 kHz: alcance reducido a 80-90%
+  - Diferencia: a 15m de profundidad, 400 kHz podría perder los extremos del swath
+- **Decisión de cambio:** Si el swath efectivo se reduce <80m (de 120m), el 100% cobertura requiere más líneas = aumento de tiempo.
+- **Respuesta esperada:** "En turbidez extrema cambiaría a 200 kHz porque la absorción por partículas es menor. A 400 kHz perdería ~30% del alcance, obligándome a reducir el swath y aumentar líneas."
+
+#### PREGUNTA E6 — Errores entre líneas en años anteriores (Torres Pimienta)
+"En los perfiles de años anteriores en la escollera se observan saltos entre líneas adyacentes. ¿Qué causa más probable: squat de la embarcación, error de pitch en el MRU, o variación de la velocidad del sonido entre perfiles? ¿Cómo lo diagnosticarían si ustedes fueran los supervisores de ese levantamiento?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Squat:** La embarcación se hunde a mayor velocidad. Si las líneas de ida son a 4 nudos y retorno a 3 nudos, el squat difiere = salto sistemático entre líneas.
+- **Error de pitch:** Si el patch test de pitch no se hizo correctamente, las líneas de ida y retorno muestran profundidades diferentes en la misma posición.
+- **Variación SVP:** Si los perfiles de años anteriores usaron SVP diferente para cada línea (sin promediar), la profundidad cambia entre líneas.
+- **Diagnóstico:**
+  1. Graficar profundidad vs velocidad de la embarcación (detectar squat)
+  2. Comparar ida vs retorno en mismos puntos (detectar pitch)
+  3. Revisar logs de SVP (detectar variación térmica)
+- **Respuesta esperada:** "El squat es el más probable si el salto correlaciona con velocidad. Lo diagnosticaría graficando profundidad vs velocidad, y comparando ida/retorno para descartar pitch."
+
+---
+
+### GRUPO COTECMAR — Preguntas del evaluador
+
+#### PREGUNTA E7 — Modo diferencial: precisión real (Pérez Londoño)
+"Usaron modo diferencial (DGPS) con el SeaPath 130. La precisión nominal del DGPS es 0.5m. Pero en la dársena COTECMAR hay estructuras metálicas, grúas, y edificios de 6 pisos a 50m de distancia. ¿Cuál es la precisión REAL del DGPS en ese entorno, y cómo lo verificaron?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Multipath en puertos:** Estructuras metálicas reflejan señal GPS. El error de multipath en DGPS puede alcanzar **1-3m** en vez de los 0.5m nominales.
+- **Verificación:**
+  1. Dejar el receptor estático 10 minutos y medir la dispersión de posiciones
+  2. Comparar con un punto de control conocido (benchmark)
+  3. Si la dispersión es >0.5m = multipath significativo
+- **Mitigación:** Usar RTK en vez de DGPS, o aumentar el tiempo de observación.
+- **Lo que hicieron bien:** Usaron DGPS que es apropiado para la precisión requerida (Orden Especial: 5m horizontal).
+- **Trampa:** Si defienden los 0.5m sin considerar el entorno = no entienden multipath.
+- **Respuesta esperada:** "En puerto con estructuras metálicas, la precisión real DGPS puede degradarse a 1-2m por multipath. Lo verificamos dejando el receptor estático y midiendo dispersión."
+
+#### PREGUNTA E8 — MRU en monohaz: ¿se usó? (Rodríguez Puentes)
+"En el levantamiento monohaz usaron EA440 con polo único en estribor. El MRU 5+ estaba instalado para el multihaz. ¿Usaron el MRU para compensar el monohaz? Si no, ¿cómo corrigieron el pitch y roll en el monohaz? Y si sí, ¿cómo sincronizaron el MRU con el EA440 que usa protocolo NMEA diferente al EM2040P?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **EA440:** Ecosonda monohaz que NO requiere compensación de motion en tiempo real (mide solo un punto, no un swath).
+- **MRU 5+:** Diseñado para multihaz. Para monohaz, la compensación se hace en post-procesamiento o no es necesaria si el pitch/roll es <2°.
+- **Sincronización:** Si intentaron usar MRU con EA440, el protocolo difiere: EM2040P usa Kongsberg binary, EA440 usa NMEA 0183.
+- **Lo que probablemente hicieron:** No usaron MRU para el monohaz. El EA440 mide sin compensación de motion (aceptable para Orden Especial con pitch <5°).
+- **Trampa:** Si dicen "sí, usamos el MRU para ambos" = deben explicar la conversión de protocolo.
+- **Respuesta esperada:** "El monohaz no requiere MRU porque mide un solo punto. El EA440 no compensa motion en tiempo real; es aceptable si el pitch es menor a 5°."
+
+#### PREGUNTA E9 — WGS84 en DGPS: consecuencias y solución (Huertas Quintero)
+"Usaron WGS84 con DGPS. El WGS84 se actualiza cada año por movimiento de placas tectónicas. En Colombia, la placa de Nazca se mueve ~2cm/año hacia el NE. Si este levantamiento se hizo en febrero 2026 con WGS84(G2290), y un cliente quiere comparar con un levantamiento de 2024 en MAGNA-SIRGAS, ¿cuál es el error de posición? ¿Cómo se hubiera podido hacer el levantamiento en MAGNA-SIRGAS desde el inicio?"
+
+**ARGUMENTOS PARA EL EVALUADOR:**
+- **Error WGS84 vs MAGNA-SIRGAS:**
+  - Movimiento de placa: ~2cm/año × 2 años = **4cm de diferencia**
+  - Transformación WGS84→MAGNA-SIRGAS: requiere parámetros oficiales del IGAC
+  - Error total sin transformación: **1-3m** (dependiendo de la zona)
+- **Solución para MAGNA-SIRGAS desde inicio:**
+  1. Configurar el receptor Trimble R10 para salida en MAGNA-SIRGAS (requiere datum local)
+  2. O: medir en WGS84 y transformar en post-procesamiento con software IGAC
+  3. Requiere control terrestre en MAGNA-SIRGAS para validar la transformación
+- **Lo que NO hicieron:** No establecieron control terrestre, no documentaron transformación.
+- **Trampa:** Si dicen "no importa, DGPS es de 0.5m" = 4cm es despreciable, pero el error de transformación sin control puede ser metros.
+- **Respuesta esperada:** "El error es ~4cm por movimiento de placa más 1-3m por transformación sin control. Para MAGNA-SIRGAS necesitamos estación de referencia local o transformación IGAC validada."
+
+---
+
+## ASIGNACIÓN ESTRATÉGICA DE PREGUNTAS — VERSIÓN FINAL
+
+| Estudiante | Debilidad Principal | Pregunta más efectiva | Pregunta sobre lo que hizo bien |
+|-----------|---------------------|----------------------|--------------------------------|
+| **Grupo A - Pérez Londoño** | Sin plan de contingencia, roles mal definidos | Pregunta 1 (offsets + error de roll) | E7 (DGPS real en puerto + multipath) |
+| **Grupo A - Rodríguez Puentes** | Patch test sin resultados, bias no corregido | Pregunta 2 (patch test + error de apuntamiento) | E8 (MRU en monohaz: ¿se usó?) |
+| **Grupo A - Trujillo Jaramillo** | Sin protocolo backup, metadatos básicos | Pregunta 1 (backup) + seguimiento de metadatos IHO | B3 (2 perfiles SVP: ¿cuánto error térmico?) |
+| **Grupo A - Huertas Quintero** | Sin control terrestre, sin protocolos ambientales | Pregunta 1 (MAGNA-SIRGAS) + seguimiento de derrame | E9 (WGS84 vs MAGNA-SIRGAS: consecuencias) |
+| **Grupo B - Posada Ciro** | Sin ground-truth, tecnologías planificadas no usadas | Pregunta 3 (erosión vs movilidad) — más difícil | E1 (Líneas paralelas al talud: error en cresta) + E4 (Latencia en patch test) |
+| **Grupo B - Torres Pimienta** | Puntajes perfectos, oral incompleto | Pregunta 1 (blancos flotantes vs fijos) — expone debilidad oculta | E2 (Calado del multihaz: verificación en Hypack) + E6 (Saltos entre líneas: diagnóstico) |
+| **Grupo B - Murillo Quintero** | Sin problemas documentados, todo "perfecto" | Pregunta 1 (evacuación + responsabilidad legal) — rompe ilusión de perfección | B6 (400 kHz vs 200 kHz) + E5 (Turbidez extrema: ¿cambiar frecuencia?) |
+
+### Asignación por sesión de examen (propuesta):
+
+**Sesión 1 — Grupo B (Escollera) — 30 minutos**
+| Tiempo | Estudiante | Preguntas |
+|--------|-----------|-----------|
+| 0-10 min | Posada Ciro | E1 + E4 + Pregunta 1 (calibración tiempo real) |
+| 10-20 min | Torres Pimienta | E2 + E6 + Pregunta 2 (verificación vertical) |
+| 20-30 min | Murillo Quintero | B6 + E5 + Pregunta 3 (densidad líneas) |
+
+**Sesión 2 — Grupo A (COTECMAR) — 30 minutos**
+| Tiempo | Estudiante | Preguntas |
+|--------|-----------|-----------|
+| 0-10 min | Pérez Londoño | E7 + Pregunta 1 (offsets + error de roll) |
+| 10-20 min | Rodríguez Puentes | E8 + Pregunta 2 (patch test) |
+| 20-30 min | Trujillo Jaramillo | B3 + Pregunta 1 (backup) |
+| 30-40 min | Huertas Quintero | E9 + Pregunta 1 (MAGNA-SIRGAS) |
+
+### Técnica recomendada:
+1. **Empezar con pregunta de lo que hicieron bien** — los pone cómodos
+2. **Inmediatamente presionar en el detalle técnico** — "¿y cuánto error introduce eso?"
+3. **Usar comparación entre grupos** — "El Grupo B tomó blancos, ustedes no"
+4. **Finalizar con pregunta de contingencia** — "Es 15:00, falla el generador, ¿qué hace?"
+5. **Si no sabe, no le ayude** — Cat A debe responder solo o admitir que no sabe
 
 ---
 
